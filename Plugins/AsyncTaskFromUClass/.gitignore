@@ -1,0 +1,16 @@
+/DerivedDataCache
+/Intermediate
+/Saved
+/Output
+/Binaries
+/Build
+/Wrapper
+/Wrapper_Development
+/Wrapper_Debug
+/Wrapper_Shipping
+/Wrapper_Test
+/.vs
+/.idea
+/BuildTools
+*.sln
+/Content/Sparky/JavaScript/**/*.map
