@@ -24,6 +24,7 @@
 #include "BlueprintNodeSpawner.h"
 #include "BlueprintActionDatabaseRegistrar.h"
 #include "BlueprintCompilationManager.h"
+#include "EditorCategoryUtils.h"
 #include "K2Node_CallArrayFunction.h"
 #include "K2Node_EnumLiteral.h"
 #include "K2Node_GenericCreateObject.h"
@@ -428,6 +429,11 @@ FName UK2Node_AsyncTaskFromUObject::GetCornerIcon() const
 // 	UFunction* TargetFunction = GetFactoryFunction();
 // 	return UK2Node_CallFunction::GetDefaultCategoryForFunction(TargetFunction, FText::GetEmpty());
 // }
+
+FText UK2Node_AsyncTaskFromUObject::GetMenuCategory() const
+{
+	return FEditorCategoryUtils::GetCommonCategory(FCommonEditorCategory::Gameplay);
+}
 
 void UK2Node_AsyncTaskFromUObject::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
 {
