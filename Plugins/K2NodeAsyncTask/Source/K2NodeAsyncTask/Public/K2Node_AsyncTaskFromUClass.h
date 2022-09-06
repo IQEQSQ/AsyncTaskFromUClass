@@ -23,7 +23,7 @@ class UK2Node_TemporaryVariable;
  * +K2AsyncTaskPinRedirects=(ProxyClassName="AbilityTask_PlayMontageAndWait", OldPinName="OnComplete", NewPinName="OnBlendOut")
  */
 
-struct FAsyncTaskForBPPinRedirectMapInfo
+struct FAsyncTaskFromUClassPinRedirectMapInfo
 {
 	TMap<FName, TArray<UClass*> > OldPinToProxyClassMap;
 };
@@ -31,7 +31,7 @@ struct FAsyncTaskForBPPinRedirectMapInfo
 /** !!! The proxy object should have RF_StrongRefOnFrame flag. !!! */
 
 UCLASS()
-class ASYNCTASKFROMUCLASS_API UK2Node_AsyncTaskFromUClass : public UK2Node_ConstructObjectFromClass
+class K2NODEASYNCTASK_API UK2Node_AsyncTaskFromUClass : public UK2Node_ConstructObjectFromClass
 {
 	GENERATED_UCLASS_BODY()
 
@@ -89,7 +89,7 @@ protected:
 	UPROPERTY()
 	FName ProxyActivateFunctionName;
 
-	struct ASYNCTASKFROMUCLASS_API FBaseAsyncTaskHelper
+	struct K2NODEASYNCTASK_API FBaseAsyncTaskHelper
 	{
 		struct FOutputPinAndLocalVariable
 		{
@@ -111,7 +111,7 @@ protected:
 	};
 
 	// Pin Redirector support
-	static TMap<FName, FAsyncTaskForBPPinRedirectMapInfo> AsyncTaskPinRedirectMap;
+	static TMap<FName, FAsyncTaskFromUClassPinRedirectMapInfo> AsyncTaskPinRedirectMap;
 	static bool bAsyncTaskPinRedirectMapInitialized;
 
 private:

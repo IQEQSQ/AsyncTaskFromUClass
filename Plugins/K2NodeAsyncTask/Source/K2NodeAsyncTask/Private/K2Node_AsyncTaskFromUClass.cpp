@@ -98,11 +98,11 @@ void UK2Node_AsyncTaskFromUClass::EarlyValidation(class FCompilerResultsLog& Mes
 		MessageLog.Error(*FText::Format(LOCTEXT("AsyncTaskFromUClass_WrongClassFmt", "Cannot construct objects of type '{0}' in @@"), FText::FromString(GetPathNameSafe(ClassToSpawn))).ToString(), this);
 	}
 
-	UEdGraphPin* OuterPin = GetOuterPin();
-	if (!OuterPin || (!OuterPin->DefaultObject && !OuterPin->LinkedTo.Num()))
-	{
-		MessageLog.Error(*LOCTEXT("AsyncTaskFromUClass_NoOuter", "Outer object is required in @@").ToString(), this);
-	}
+	// UEdGraphPin* OuterPin = GetOuterPin();
+	// if (!OuterPin || (!OuterPin->DefaultObject && !OuterPin->LinkedTo.Num()))
+	// {
+	// 	MessageLog.Error(*LOCTEXT("AsyncTaskFromUClass_NoOuter", "Outer object is required in @@").ToString(), this);
+	// }
 }
 
 
@@ -616,7 +616,7 @@ void UK2Node_AsyncTaskFromUClass::ExpandNode(class FKismetCompilerContext& Compi
 
 	// store off the class to spawn before we mutate pin connections:
 	UClass* ClassToSpawn = GetClassToSpawn();
-	
+	const UEdGraphSchema_K2* Schema = CompilerContext.GetSchema();
 	bool bSucceeded = true;
 	//connect exe
 	{
@@ -636,6 +636,14 @@ void UK2Node_AsyncTaskFromUClass::ExpandNode(class FKismetCompilerContext& Compi
 	{
 		UEdGraphPin* SpawnOuterPin = GetOuterPin();
 		UEdGraphPin* CallOuterPin = CallCreateNode->FindPin(TEXT("Outer"));
+
+    	if(!SpawnOuterPin || SpawnOuterPin->LinkedTo.Num()==0)
+    	{
+    		UK2Node_Self* SelfNode = CompilerContext.SpawnIntermediateNode<UK2Node_Self>(this, SourceGraph);
+    		SelfNode->AllocateDefaultPins();
+    		Schema->TryCreateConnection(SelfNode->FindPinChecked(UEdGraphSchema_K2::PN_Self), SpawnOuterPin);
+    	}
+    	
 		bSucceeded &= SpawnOuterPin && CallOuterPin && CompilerContext.MovePinLinksToIntermediate(*SpawnOuterPin, *CallOuterPin).CanSafeConnect();
 	}
 
@@ -667,7 +675,7 @@ void UK2Node_AsyncTaskFromUClass::ExpandNode(class FKismetCompilerContext& Compi
 		CompilerContext.MessageLog.Error(*LOCTEXT("AsyncTaskFromUClass_Error", "ICE: AsyncTaskFromUClass error @@").ToString(), this);
 	}
 
-	const UEdGraphSchema_K2* Schema = CompilerContext.GetSchema();
+	
 	check(SourceGraph && Schema);
 	bool bIsErrorFree = true;
 
@@ -920,7 +928,7 @@ void UK2Node_AsyncTaskFromUClass::ValidateNodeDuringCompilation(class FCompilerR
 	}
 }
 
-TMap<FName, FAsyncTaskForBPPinRedirectMapInfo> UK2Node_AsyncTaskFromUClass::AsyncTaskPinRedirectMap;
+TMap<FName, FAsyncTaskFromUClassPinRedirectMapInfo> UK2Node_AsyncTaskFromUClass::AsyncTaskPinRedirectMap;
 bool UK2Node_AsyncTaskFromUClass::bAsyncTaskPinRedirectMapInitialized = false;
 
 UK2Node::ERedirectType UK2Node_AsyncTaskFromUClass::DoPinsMatchForReconstruction(const UEdGraphPin* NewPin, int32 NewPinIndex, const UEdGraphPin* OldPin, int32 OldPinIndex) const
@@ -947,7 +955,7 @@ UK2Node::ERedirectType UK2Node_AsyncTaskFromUClass::DoPinsMatchForReconstruction
 					UClass* RedirectProxyClass = FindObject<UClass>(ANY_PACKAGE, *ProxyClassString);
 					if (RedirectProxyClass)
 					{
-						FAsyncTaskForBPPinRedirectMapInfo& PinRedirectInfo = AsyncTaskPinRedirectMap.FindOrAdd(*OldPinString);
+						FAsyncTaskFromUClassPinRedirectMapInfo& PinRedirectInfo = AsyncTaskPinRedirectMap.FindOrAdd(*OldPinString);
 						TArray<UClass*>& ProxyClassArray = PinRedirectInfo.OldPinToProxyClassMap.FindOrAdd(*NewPinString);
 						ProxyClassArray.AddUnique(RedirectProxyClass);
 					}
@@ -956,7 +964,7 @@ UK2Node::ERedirectType UK2Node_AsyncTaskFromUClass::DoPinsMatchForReconstruction
 		}
 
 		// See if these pins need to be remapped.
-		if (FAsyncTaskForBPPinRedirectMapInfo* PinRedirectInfo = AsyncTaskPinRedirectMap.Find(OldPin->PinName))
+		if (FAsyncTaskFromUClassPinRedirectMapInfo* PinRedirectInfo = AsyncTaskPinRedirectMap.Find(OldPin->PinName))
 		{
 			if (TArray<UClass*>* ProxyClassArray = PinRedirectInfo->OldPinToProxyClassMap.Find(NewPin->PinName))
 			{

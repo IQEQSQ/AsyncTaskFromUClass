@@ -12,7 +12,7 @@
 	],
 	"Plugins": [
 		{
-			"Name": "AsyncTaskFromUClass",
+			"Name": "K2NodeAsyncTask",
 			"Enabled": true
 		}
 	]

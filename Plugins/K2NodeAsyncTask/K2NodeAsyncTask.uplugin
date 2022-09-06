@@ -2,11 +2,11 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "AsyncTaskFromUClass",
+	"FriendlyName": "K2NodeAsyncTask",
 	"Description": "generate async task blueprint node for uclass",
 	"Category": "Other",
 	"CreatedBy": "phiachen",
-	"CreatedByURL": "https://github.com/phiachen/AsyncTaskFromUClass",
+	"CreatedByURL": "https://github.com/phiachen/K2NodeAsyncTask",
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
@@ -17,7 +17,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "AsyncTaskFromUClass",
+			"Name": "K2NodeAsyncTask",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "Default"
 		}

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class AsyncTaskFromUClass : ModuleRules
+public class K2NodeAsyncTask : ModuleRules
 {
-	public AsyncTaskFromUClass(ReadOnlyTargetRules Target) : base(Target)
+	public K2NodeAsyncTask(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
